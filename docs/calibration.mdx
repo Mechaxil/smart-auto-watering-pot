@@ -7,7 +7,7 @@ slug: /projects/auto-watering-pot/calibration
 
 import GlossaryTerm from '@site/src/components/GlossaryTerm';
 
-Correct calibration of the <GlossaryTerm term="Capacitive Soil Moisture Sensor" /> is essential for predictable watering.  
+Correct calibration of the <GlossaryTerm term="Capacitive Soil Moisture Sensor" /> is essential for predictable watering.
 On this sensor type, **higher <GlossaryTerm term="ADC" /> value means drier soil**.
 
 This page shows a simple procedure to determine realistic thresholds for your soil and pot.
@@ -18,8 +18,8 @@ This page shows a simple procedure to determine realistic thresholds for your so
 
 Wire the sensor to the <GlossaryTerm term="Development board of choice" />:
 
-- VCC → 3.3 V or 5 V (according to sensor rating)  
-- GND → GND  
+- VCC → 3.3 V or 5 V (according to sensor rating)
+- GND → GND
 - OUT → <GlossaryTerm term="ADC" /> input (refer to the GPIO pinout for the board you are using)
 
 Make sure the firmware is *not* running yet so you can use the <GlossaryTerm term="REPL" /> for manual testing.
@@ -36,11 +36,11 @@ Use this short script in the <GlossaryTerm term="MicroPython" /> <GlossaryTerm t
 from machine import Pin, ADC
 from time import sleep
 
-adc = ADC(Pin(0))  # Change this to the GPIO pin connected to the sensor OUT for example GPIO0 on ESP32-C3
+adc = ADC(Pin(26)) # Change this to the GPIO pin connected to the sensor
 
 while True:
-    print(adc.read_u16())
-    sleep(1)
+print(adc.read_u16())
+sleep(1)
 ```
 
 ---
@@ -49,17 +49,17 @@ while True:
 
 Measure and note the <GlossaryTerm term="ADC" /> values for:
 
-1. **In air** (probe not touching anything)  
-2. **Dry soil** (inserted in your pot, soil as dry as you consider acceptable)  
+1. **In air** (probe not touching anything)
+2. **Dry soil** (inserted in your pot, soil as dry as you consider acceptable)
 3. **Wet soil** (after watering the pot thoroughly and letting water soak in)
 
 You will typically see something like this (example only):
 
 | Condition | Example <GlossaryTerm term="ADC" /> value |
 |-----------|-------------------|
-| Air       | ~50 000           |
-| Dry soil  | ~31 500           |
-| Wet soil  | ~23 000           |
+| Air | ~50 000 |
+| Dry soil| ~31 500 |
+| Wet soil| ~23 000 |
 
 Your values will differ; what matters is the *relative* spacing.
 
@@ -69,12 +69,12 @@ Your values will differ; what matters is the *relative* spacing.
 
 Use the dry and wet readings to set two thresholds:
 
-- `DRY_THRESHOLD` – above this value, the soil is considered too dry → watering starts.  
-- `WET_THRESHOLD` – below this value, the soil is considered wet enough → watering stops.
+- `DRY_THRESHOLD` - above this value, the soil is considered too dry → watering starts.
+- `WET_THRESHOLD` - below this value, the soil is considered wet enough → watering stops.
 
 Example based on the table above:
 
-- `DRY_THRESHOLD = 30000`  
+- `DRY_THRESHOLD = 30000`
 - `WET_THRESHOLD = 25000`
 
 This gives some <GlossaryTerm term="Hysteresis" /> so the system does not rapidly toggle on every tiny fluctuation.
@@ -87,8 +87,8 @@ Edit these constants in your `main.py` file and redeploy it to the board.
 
 Let the system run for a few days and watch:
 
-- How often it waters  
-- Whether the soil is staying too wet or too dry  
+- How often it waters
+- Whether the soil is staying too wet or too dry
 - The printed <GlossaryTerm term="ADC" /> values around each watering event
 
 Fine-tune `DRY_THRESHOLD`, `WET_THRESHOLD`, `WATER_TIME_SEC` and `MEASURE_INTERVAL` until it behaves the way you want for that plant and soil.
